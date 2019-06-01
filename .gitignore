@@ -1,0 +1,14 @@
+# IDE
+.idea
+
+# Environment
+.env/
+.venv/
+env/
+venv/
+
+# Cache
+__pycache__/
+.cache
+.pytest_cache/
+.DS_Store
