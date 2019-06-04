@@ -3,6 +3,8 @@ Parser a string
 """
 from typing import List
 
+from drf_zip_numbers.exceptions import TooManyTokens
+
 ZIP_START_DELIMITER = '('
 ZIP_END_DELIMITER = ')'
 
@@ -12,21 +14,25 @@ class ZipNumberParser:
     Parse zipped string to list of integer numbers
     """
 
-    def __init__(self, max_length: int = 0):
+    def __init__(self, max_length: int = 1000000):
         self.max_length = max_length
         self.int_base = 10
+        self.count_tokens = 0
 
     def parse(self, source: str) -> List[int]:
         """
         Parse zipped string to list of integer numbers
         """
+        self.count_tokens = 0
         items = []
+
+        # Parse base for int
+        if source.startswith('x'):
+            base, source = source.split(';', maxsplit=1)
+            self.int_base = int(base[1:])
 
         # Parse empty string as empty list
         if source:
-            if source.startswith('x'):
-                base, source = source.split(';', maxsplit=1)
-                self.int_base = int(base[1:])
             items = self._parse_string(source)
 
         return items
@@ -77,9 +83,14 @@ class ZipNumberParser:
             start, stop = token.split('-', maxsplit=1)
             start = self._get_int(start)
             stop = self._get_int(stop)
+            self._check_length(abs(stop - start))
             token = [item for item in range(start, stop + 1)]
         else:
             token = [token]
+
+        count_new_tokens = len(token)
+        self._check_length(count_new_tokens)
+        self.count_tokens += count_new_tokens
 
         return [self._get_int(item) for item in token]
 
@@ -91,3 +102,10 @@ class ZipNumberParser:
             return num
 
         return int(num, base=self.int_base)
+
+    def _check_length(self, new_count: int):
+        """
+        Check limit
+        """
+        if self.count_tokens + new_count > self.max_length:
+            raise TooManyTokens()

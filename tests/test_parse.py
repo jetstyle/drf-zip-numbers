@@ -3,6 +3,7 @@ Tests for parser
 """
 import pytest
 
+from drf_zip_numbers.exceptions import TooManyTokens
 from drf_zip_numbers.parser import ZipNumberParser
 
 
@@ -54,3 +55,14 @@ class TestParser:
         """
         for source, result in bases:
             self.assert_parse(source, result)
+
+    def test_limit(self, greater_10, less_10):
+        """
+        Test limits
+        """
+        for source in greater_10:
+            with pytest.raises(TooManyTokens):
+                self.assert_parse(source, [], max_length=10)
+
+        for source, result in less_10:
+            self.assert_parse(source, result, max_length=10)
