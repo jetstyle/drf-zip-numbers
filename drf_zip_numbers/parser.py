@@ -30,6 +30,8 @@ class ZipNumberParser:
         if source.startswith('x'):
             base, source = source.split(';', maxsplit=1)
             self.int_base = int(base[1:])
+        else:
+            self.int_base = 10
 
         # Parse empty string as empty list
         if source:
