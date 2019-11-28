@@ -66,3 +66,24 @@ class TestParser:
 
         for source, result in less_10:
             self.assert_parse(source, result, max_length=10)
+
+    def test_base_delta(self, base_delta):
+        """
+        Base delta string
+        """
+        for source, result in base_delta:
+            self.assert_parse(source, result)
+
+    def test_delta_ranges(self, delta_ranges):
+        """
+        Ranges for delta string
+        """
+        for source, result in delta_ranges:
+            self.assert_parse(source, result)
+
+    def test_delta_x_ranges(self, delta_x_ranges):
+        """
+        x-ranges for delta stings
+        """
+        for source, result in delta_x_ranges:
+            self.assert_parse(source, result)
